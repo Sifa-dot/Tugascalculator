@@ -4,7 +4,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Calculator</title>
+  <title>calculator</title>
   <style>
     body {
       margin: 0;
@@ -135,19 +135,16 @@ let angkaSebelumnya = null;
 let operator = null;
 let reset = false;
 
-// Menampilkan angka
 function tampilkan() {
     display.value = angkaSekarang;
 }
 
-// Memasukkan angka dan operator
 function tambah(nilai) {
 
     if (angkaSekarang === "Error") {
         hapus();
     }
 
-    // Persentase
     if (nilai === "%") {
         angkaSekarang = String(
             parseFloat(angkaSekarang) / 100
@@ -157,7 +154,7 @@ function tambah(nilai) {
         return;
     }
 
-    // Memasukkan operator
+  
     if (["+", "-", "*", "/"].includes(nilai)) {
 
         if (operator !== null && !reset) {
@@ -170,13 +167,12 @@ function tambah(nilai) {
         return;
     }
 
-    // Memasukkan angka
     if (reset) {
         angkaSekarang = "0";
         reset = false;
     }
 
-    // Mencegah titik ganda
+  
     if (nilai === "." && angkaSekarang.includes(".")) {
         return;
     }
@@ -190,7 +186,6 @@ function tambah(nilai) {
     tampilkan();
 }
 
-// Menghitung hasil
 function hitung() {
 
     if (operator === null || angkaSebelumnya === null) {
@@ -239,7 +234,6 @@ function hitung() {
     tampilkan();
 }
 
-// Menghapus semua angka
 function hapus() {
 
     angkaSekarang = "0";
@@ -250,7 +244,6 @@ function hapus() {
     tampilkan();
 }
 
-// Menghapus satu angka
 function mundur() {
 
     if (angkaSekarang === "Error" || reset) {
@@ -267,7 +260,7 @@ function mundur() {
     tampilkan();
 }
 
-// Menggunakan keyboard laptop
+
 document.addEventListener("keydown", function(event) {
 
     let tombol = event.key;
@@ -306,4 +299,5 @@ document.addEventListener("keydown", function(event) {
 
 </body>
 
+</html>
 </html>
