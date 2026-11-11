@@ -1,0 +1,309 @@
+<!DOCTYPE html>
+<html lang="id">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Calculator</title>
+  <style>
+    body {
+      margin: 0;
+      min-height: 100vh;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      background: #fff;
+      font-family: Arial, sans-serif;
+    }
+
+    .calculator {
+      width: 280px;
+      padding: 16px;
+      background: #fff;
+      border: 2px solid #000;
+      border-radius: 12px;
+    }
+
+    #layar {
+      width: 100%;
+      box-sizing: border-box;
+      margin-bottom: 12px;
+      padding: 14px 10px;
+      font-size: 28px;
+      text-align: right;
+      background: #fff;
+      color: #000;
+      border: 2px solid #000;
+      border-radius: 8px;
+    }
+
+
+    .buttons {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 8px;
+    }
+
+
+    button {
+      padding: 16px 0;
+      font-size: 20px;
+      background: #d9d9d9;
+      color: #000;
+      border: none;
+      border-radius: 8px;
+      cursor: pointer;
+    }
+
+    button:hover {
+      filter: brightness(0.9);
+    }
+
+    button:active {
+      transform: scale(0.95);
+    }
+
+    .operator {
+      background: #555;
+      color: #fff;
+    }
+
+   
+    .clear {
+      background: #e53935;
+      color: #fff;
+    }
+
+    /* C */
+    .delete {
+      background: #fb8c00;
+      color: #fff;
+    }
+
+    /* ⌫ */
+    .equals {
+      background: #000;
+      color: #fff;
+    }
+
+    /* = */
+
+    .lebar {
+      grid-column: span 2;
+    }
+  </style>
+</head>
+
+<body>
+
+  <div class="calculator">
+    <input type="text" id="layar" value="0" readonly>
+
+    <div class="buttons">
+      <button class="clear" onclick="hapus()">C</button>
+      <button class="delete" onclick="mundur()">⌫</button>
+      <button class="operator" onclick="tambah('%')">%</button>
+      <button class="operator" onclick="tambah('/')">÷</button>
+
+      <button onclick="tambah('7')">7</button>
+      <button onclick="tambah('8')">8</button>
+      <button onclick="tambah('9')">9</button>
+      <button class="operator" onclick="tambah('*')">×</button>
+
+      <button onclick="tambah('4')">4</button>
+      <button onclick="tambah('5')">5</button>
+      <button onclick="tambah('6')">6</button>
+      <button class="operator" onclick="tambah('-')">−</button>
+
+      <button onclick="tambah('1')">1</button>
+      <button onclick="tambah('2')">2</button>
+      <button onclick="tambah('3')">3</button>
+      <button class="operator" onclick="tambah('+')">+</button>
+
+      <button class="lebar" onclick="tambah('0')">0</button>
+      <button onclick="tambah('.')">.</button>
+      <button class="equals" onclick="hitung()">=</button>
+    </div>
+  </div>
+
+<script>
+
+let display = document.getElementById("layar");
+
+let angkaSekarang = "0";
+let angkaSebelumnya = null;
+let operator = null;
+let reset = false;
+
+// Menampilkan angka
+function tampilkan() {
+    display.value = angkaSekarang;
+}
+
+// Memasukkan angka dan operator
+function tambah(nilai) {
+
+    if (angkaSekarang === "Error") {
+        hapus();
+    }
+
+    // Persentase
+    if (nilai === "%") {
+        angkaSekarang = String(
+            parseFloat(angkaSekarang) / 100
+        );
+        reset = true;
+        tampilkan();
+        return;
+    }
+
+    // Memasukkan operator
+    if (["+", "-", "*", "/"].includes(nilai)) {
+
+        if (operator !== null && !reset) {
+            hitung();
+        }
+
+        angkaSebelumnya = parseFloat(angkaSekarang);
+        operator = nilai;
+        reset = true;
+        return;
+    }
+
+    // Memasukkan angka
+    if (reset) {
+        angkaSekarang = "0";
+        reset = false;
+    }
+
+    // Mencegah titik ganda
+    if (nilai === "." && angkaSekarang.includes(".")) {
+        return;
+    }
+
+    if (angkaSekarang === "0" && nilai !== ".") {
+        angkaSekarang = nilai;
+    } else {
+        angkaSekarang += nilai;
+    }
+
+    tampilkan();
+}
+
+// Menghitung hasil
+function hitung() {
+
+    if (operator === null || angkaSebelumnya === null) {
+        return;
+    }
+
+    let angkaKedua = parseFloat(angkaSekarang);
+    let hasil;
+
+    switch (operator) {
+
+        case "+":
+            hasil = angkaSebelumnya + angkaKedua;
+            break;
+
+        case "-":
+            hasil = angkaSebelumnya - angkaKedua;
+            break;
+
+        case "*":
+            hasil = angkaSebelumnya * angkaKedua;
+            break;
+
+        case "/":
+            if (angkaKedua === 0) {
+                angkaSekarang = "Error";
+                angkaSebelumnya = null;
+                operator = null;
+                reset = true;
+                tampilkan();
+                return;
+            }
+
+            hasil = angkaSebelumnya / angkaKedua;
+            break;
+    }
+
+    angkaSekarang = String(
+        Number(hasil.toPrecision(12))
+    );
+
+    angkaSebelumnya = null;
+    operator = null;
+    reset = true;
+
+    tampilkan();
+}
+
+// Menghapus semua angka
+function hapus() {
+
+    angkaSekarang = "0";
+    angkaSebelumnya = null;
+    operator = null;
+    reset = false;
+
+    tampilkan();
+}
+
+// Menghapus satu angka
+function mundur() {
+
+    if (angkaSekarang === "Error" || reset) {
+        angkaSekarang = "0";
+        reset = false;
+    } else {
+        angkaSekarang = angkaSekarang.slice(0, -1);
+
+        if (angkaSekarang === "" || angkaSekarang === "-") {
+            angkaSekarang = "0";
+        }
+    }
+
+    tampilkan();
+}
+
+// Menggunakan keyboard laptop
+document.addEventListener("keydown", function(event) {
+
+    let tombol = event.key;
+
+    if (tombol >= "0" && tombol <= "9") {
+        tambah(tombol);
+    }
+
+    else if (tombol === ".") {
+        tambah(".");
+    }
+
+    else if (["+", "-", "*", "/"].includes(tombol)) {
+        tambah(tombol);
+    }
+
+    else if (tombol === "Enter" || tombol === "=") {
+        hitung();
+    }
+
+    else if (tombol === "Backspace") {
+        mundur();
+    }
+
+    else if (tombol === "Escape") {
+        hapus();
+    }
+
+    else if (tombol === "%") {
+        tambah("%");
+    }
+
+});
+
+</script>
+
+</body>
+
+</html>
